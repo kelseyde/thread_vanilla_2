@@ -34,3 +34,5 @@ var threadSearch = {
   }
 
 }
+
+module.exports = threadSearch
