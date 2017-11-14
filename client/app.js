@@ -1,5 +1,6 @@
 var requestHelper = require("./helpers/request_helper");
-var appendChildren = require('append-children')
+var appendChildren = require('append-children');
+var threadSearch = require("./helpers/thread_search");
 
 const showThread = function(thread, parentDiv) {
   post = thread;
@@ -137,49 +138,16 @@ const createReplyForm = function(form) {
       text: commentInput.value,
       children: []
     }
-    var commentToFindCopy = createParentCommentCopy(form);
+    var commentToFindCopy = threadSearch.createParentCommentCopy(form);
+    var foundComment = threadSearch.findComment(post, commentToFindCopy);
     console.log("POST: ", post);
-    var foundComment = findComment(post, commentToFindCopy);
+    console.log("FOUND COMMENT: ", foundComment);
     foundComment.children.push(newComment);
     requestHelper.put("/", JSON.stringify(post), function() {
       console.log("put request sent! content is ", JSON.stringify(post));
     });
     createReply(newComment, form);
   });
-}
-
-
-var findComment = function(startPoint, commentToFind) {
-  var element = startPoint;
-  if (element.author.includes("submitted by")) {
-    var author = element.author.slice(13);
-  } else { var author = element.author }
-  if (element.author === author &&
-        element.text === commentToFind.text) {
-          return element;
-  } else if (element.children !== null) {
-    var result = null;
-    for (var i = 0; result === null && i < element.children.length; i++) {
-      result = findComment(element.children[i], commentToFind);
-    }
-    return result;
-  }
-  return null;
-}
-
-var createParentCommentCopy = function(form) {
-  if (form.parentElement.childNodes[0].tagName === "H4") {
-    var parentComment = {
-      author: form.parentElement.childNodes[2].innerText,
-      text: form.parentElement.childNodes[3].innerText
-    }
-  } else {
-    var parentComment = {
-      author: form.parentElement.childNodes[0].innerText,
-      text: form.parentElement.childNodes[1].innerText
-    }
-  }
-  return parentComment;
 }
 
 
@@ -213,9 +181,7 @@ const createThread = function() {
   content.appendChild(postDiv);
   appendChildren(postDiv, [title, hr, name, text, form]);
 
-  requestHelper.post("/", JSON.stringify(post), function() {
-    console.log("post request sent! content is ", JSON.stringify(post));
-  })
+  requestHelper.post("/", JSON.stringify(post), function() {})
 
   form.addEventListener("submit", function(event) {
     event.preventDefault();
