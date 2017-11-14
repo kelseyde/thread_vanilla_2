@@ -1,0 +1,37 @@
+{
+  "name": "react_router_start_point",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+<<<<<<< HEAD
+    "build": "webpack -w",
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+=======
+    "start": "cd server && nodemon server.js",
+    "test": "mocha specs",
+    "build": "cd client && webpack -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robbbowes/JavaScript_API_Football_Planner.git"
+>>>>>>> trying to fix form null value
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-core": "^6.21.0",
+    "babel-loader": "^6.2.10",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.16.0",
+    "webpack": "^2.2.0"
+  },
+  "dependencies": {
+    "express": "^4.13.4",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "react-router-dom": "^4.2.2"
+  },
+  "description": ""
+}
