@@ -17,11 +17,24 @@ var queryHelper = {
   insert: function(object, result) {
     MongoClient.connect(this.url, function(err, db) {
       var threadCollection = db.collection("threads");
-      console.log("we are in query helper");
       threadCollection.insertOne(object, function(err, docs) {
-        console.log("1 document inserted!");
         result(docs);
       });
+    });
+  },
+
+  update: function(object, result) {
+    MongoClient.connect(this.url, function(err, db) {
+      var threadCollection = db.collection("threads");
+      console.log("object: ", object);
+      console.log("object title: ", object.title);
+      // var parsedCopy = JSON.parse(object);
+      threadCollection.update(
+        {
+          title: object.title
+        },
+        object
+      );
     });
   }
 

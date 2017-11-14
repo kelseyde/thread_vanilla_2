@@ -1,5 +1,43 @@
 var requestHelper = require("./helpers/request_helper");
 
+const populateThreadList = function(threadList) {
+  var content = document.getElementById("content-div");
+  while (content.firstChild) { content.removeChild(content.firstChild) }
+  threadList.forEach(function(thread) {
+    var postDiv = document.createElement("div");
+    postDiv.id = "post-div";
+    var title = document.createElement("h4");
+    title.id = "post-title";
+    title.innerText = thread.title;
+    var hr = document.createElement("hr");
+    var name = document.createElement("p");
+    name.id = "post-name";
+    name.innerText = "submitted by " + thread.author;
+    var form = document.createElement("form");
+    var input = document.createElement("input");
+    input.type = "submit";
+    input.value = "view";
+    form.appendChild(input);
+    content.appendChild(postDiv);
+    postDiv.appendChild(title);
+    postDiv.appendChild(hr);
+    postDiv.appendChild(name);
+    postDiv.appendChild(form);
+    form.addEventListener("submit", function() {
+      showThread(thread, content);
+    })
+  });
+}
+
+const inititaliseViewButton = function() {
+  var viewButton = document.getElementById("view");
+  viewButton.addEventListener("click", function() {
+    requestHelper.get("/threads", function(threadList) {
+      populateThreadList(threadList);
+    });
+  });
+}
+
 const showThread = function(thread, parentDiv) {
   // var contentDiv = document.getElementById("content-div");
   // while (contentDiv.firstChild) { contentDiv.removeChild(contentDiv.firstChild) }
@@ -112,7 +150,9 @@ const createReplyForm = function(form) {
     var commentToFindCopy = createParentCommentCopy(form);
     var foundComment = findComment(post, commentToFindCopy);
     foundComment.children.push(newComment);
-    console.log(post);
+    requestHelper.put("/", JSON.stringify(post), function() {
+      console.log("put request sent! content is ", JSON.stringify(post));
+    });
     createReply(newComment, form);
   });
 }
@@ -256,5 +296,6 @@ const initialiseStartButton = function() {
 }
 
 window.addEventListener("DOMContentLoaded", function() {
-  initialiseStartButton()
+  initialiseStartButton();
+  inititaliseViewButton();
 });

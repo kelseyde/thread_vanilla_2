@@ -12,7 +12,6 @@ var requestHelper = {
   },
 
   post: function(url, objectToInsert, callback) {
-    console.log("we are in request helper!");
     var request = new XMLHttpRequest();
     request.open("POST", url);
     request.addEventListener("load", function() {
@@ -21,6 +20,17 @@ var requestHelper = {
     request.setRequestHeader("Content-type", "application/json");
     request.body = objectToInsert;
     request.send(objectToInsert);
+  },
+
+  put: function(url, updatedObject, callback) {
+    var request = new XMLHttpRequest();
+    request.open("PUT", url);
+    request.addEventListener("load", function() {
+      callback();
+    });
+    request.setRequestHeader("Content-type", "application/json");
+    request.body = updatedObject;
+    request.send(updatedObject);
   }
 
 }
