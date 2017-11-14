@@ -11,7 +11,7 @@ var threadSearch = {
     } else if (element.children !== null) {
       var result = null;
       for (var i = 0; result === null && i < element.children.length; i++) {
-        result = findComment(element.children[i], commentToFind);
+        result = this.findComment(element.children[i], commentToFind);
       }
       return result;
     }
