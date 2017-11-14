@@ -12,13 +12,14 @@ var requestHelper = {
   },
 
   post: function(url, objectToInsert, callback) {
+    console.log("we are in request helper!");
     var request = new XMLHttpRequest();
     request.open("POST", url);
     request.addEventListener("load", function() {
-      var jsonString = request.responseText;
-      var data = JSON.parse(jsonString);
-      callback(data);
+      callback();
     });
+    request.setRequestHeader("Content-type", "application/json");
+    request.body = objectToInsert;
     request.send(objectToInsert);
   }
 

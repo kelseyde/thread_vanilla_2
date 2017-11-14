@@ -187,7 +187,7 @@ const createThread = function() {
   postDiv.appendChild(form);
 
   requestHelper.post("/", JSON.stringify(post), function() {
-    console.log("thread inserted into db!");
+    console.log("post request sent! content is ", JSON.stringify(post));
   })
 
   form.addEventListener("submit", function(event) {

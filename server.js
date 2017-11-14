@@ -6,14 +6,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.get('/', function (req, res) {
-  var objectToInsert = req.body;
-  queryHelper.insert(objectToInsert, function() {
-    res.sendFile(__dirname + '/client/build/index.html');
-  });
+  res.sendFile(__dirname + '/client/build/index.html');
 });
 
 app.post("/", function (req, res) {
-  res.sendFile(__dirname + '/client/build/index.html');
+  var objectToInsert = req.body;
+  queryHelper.insert(objectToInsert, function() {
+    res.json({status: "okay"});
+  });
 })
 
 app.use(express.static('client/build'));
