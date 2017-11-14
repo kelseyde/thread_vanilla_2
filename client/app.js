@@ -1,4 +1,43 @@
 var requestHelper = require("./helpers/request_helper");
+var appendChildren = require('append-children')
+
+const showThread = function(thread, parentDiv) {
+  post = thread;
+  console.log(thread);
+  var postDiv = document.createElement("div");
+  postDiv.id = "post-div";
+  if (thread.title) {
+    var title = document.createElement("h4");
+    title.id = "post-title";
+    title.innerText = thread.title;
+    var hr = document.createElement("hr");
+  }
+  var name = document.createElement("p");
+  name.id = "post-name";
+  name.innerText = "submitted by " + thread.author;
+  var text = document.createElement("p");
+  text.id = "post-text";
+  text.innerText = thread.text;
+  var form = document.createElement("form");
+  var submit = document.createElement("input");
+  submit.type = "submit";
+  submit.value = "reply";
+  form.id = "reply-button"
+  form.appendChild(submit);
+  parentDiv.appendChild(postDiv);
+  if (title) { postDiv.appendChild(title) }
+  if (hr) { postDiv.appendChild(title) }
+  appendChildren(postDiv, [hr, name, text, form]);
+  form.addEventListener("submit", function(event) {
+    event.preventDefault();
+    createReplyForm(form);
+  });
+  console.log(thread.children);
+  for (var i = 0; i < thread.children.length; i++) {
+    console.log("we are in the for loop");
+    showThread(thread.children[i], postDiv);
+  }
+}
 
 const populateThreadList = function(threadList) {
   var content = document.getElementById("content-div");
@@ -19,13 +58,12 @@ const populateThreadList = function(threadList) {
     input.value = "view";
     form.appendChild(input);
     content.appendChild(postDiv);
-    postDiv.appendChild(title);
-    postDiv.appendChild(hr);
-    postDiv.appendChild(name);
-    postDiv.appendChild(form);
-    form.addEventListener("submit", function() {
+    appendChildren(postDiv, [title, hr, name, form]);
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+      while (content.firstChild) { content.removeChild(content.firstChild) }
       showThread(thread, content);
-    })
+    });
   });
 }
 
@@ -36,49 +74,6 @@ const inititaliseViewButton = function() {
       populateThreadList(threadList);
     });
   });
-}
-
-const showThread = function(thread, parentDiv) {
-  // var contentDiv = document.getElementById("content-div");
-  // while (contentDiv.firstChild) { contentDiv.removeChild(contentDiv.firstChild) }
-
-  //MUST BE DONE BEFOREHAND
-  //
-  // var content = document.getElementById("content-div");
-  // while (content.firstChild) { content.removeChild(content.firstChild) }
-  var postDiv = document.createElement("div");
-  postDiv.id = "post-div";
-  var title = document.createElement("h4");
-  title.id = "post-title";
-  title.innerText = post.title;
-  var hr = document.createElement("hr");
-  var name = document.createElement("p");
-  name.id = "post-name";
-  name.innerText = "submitted by " + post.author;
-  var text = document.createElement("p");
-  text.id = "post-text";
-  text.innerText = post.text;
-  var form = document.createElement("form");
-  var submit = document.createElement("input");
-  submit.type = "submit";
-  submit.value = "reply";
-  form.id = "reply-button"
-  form.appendChild(submit);
-  parentDiv.appendChild(postDiv);
-  postDiv.appendChild(title);
-  postDiv.appendChild(hr);
-  postDiv.appendChild(name);
-  postDiv.appendChild(text);
-  postDiv.appendChild(form);
-  form.addEventListener("submit", function(event) {
-    event.preventDefault();
-    createReplyForm(form);
-  });
-  if (thread.children.length > 0) {
-    for (var i = 0; i < thread.children.length - 1; i++) {
-      showThread(thread.children[i], postDiv);
-    }
-  }
 }
 
 const createReply = function(comment, form) {
@@ -98,9 +93,7 @@ const createReply = function(comment, form) {
   input.value = "reply";
   form.appendChild(input);
   parent.appendChild(replyDiv);
-  replyDiv.appendChild(name);
-  replyDiv.appendChild(text);
-  replyDiv.appendChild(form);
+  appendChildren(replyDiv, [name, text, form]);
   form.addEventListener("submit", function(event) {
     event.preventDefault();
     createReplyForm(form);
@@ -120,8 +113,7 @@ const createReplyForm = function(form) {
   var nameInput = document.createElement("input");
   nameInput.type = "text";
   nameInput.id = "reply-name-input";
-  nameDiv.appendChild(nameLabel);
-  nameDiv.appendChild(nameInput);
+  appendChildren(nameDiv, [nameLabel, nameInput]);
   var commentDiv = document.createElement("div");
   commentDiv.id = "reply-comment-div";
   var commentLabel = document.createElement("label");
@@ -136,9 +128,7 @@ const createReplyForm = function(form) {
   submit.type = "submit";
   submit.value = "submit";
   submit.id = "reply-form-submit";
-  form.appendChild(nameDiv);
-  form.appendChild(commentDiv);
-  form.appendChild(submit);
+  appendChildren(form, [nameDiv, commentDiv, submit]);
   parent.appendChild(form);
   form.addEventListener("submit", function(event) {
     event.preventDefault();
@@ -148,6 +138,7 @@ const createReplyForm = function(form) {
       children: []
     }
     var commentToFindCopy = createParentCommentCopy(form);
+    console.log("POST: ", post);
     var foundComment = findComment(post, commentToFindCopy);
     foundComment.children.push(newComment);
     requestHelper.put("/", JSON.stringify(post), function() {
@@ -220,11 +211,7 @@ const createThread = function() {
   form.id = "reply-button"
   form.appendChild(submit);
   content.appendChild(postDiv);
-  postDiv.appendChild(title);
-  postDiv.appendChild(hr);
-  postDiv.appendChild(name);
-  postDiv.appendChild(text);
-  postDiv.appendChild(form);
+  appendChildren(postDiv, [title, hr, name, text, form]);
 
   requestHelper.post("/", JSON.stringify(post), function() {
     console.log("post request sent! content is ", JSON.stringify(post));
@@ -252,8 +239,7 @@ const createThreadForm = function() {
   var nameInput = document.createElement("input");
   nameInput.type = "text";
   nameInput.id = "thread-form-name-input";
-  nameDiv.appendChild(nameLabel);
-  nameDiv.appendChild(nameInput);
+  appendChildren(nameDiv, [nameLabel, nameInput]);
   var titleDiv = document.createElement("div");
   titleDiv.id = "title-div";
   var titleLabel = document.createElement("label");
@@ -262,8 +248,7 @@ const createThreadForm = function() {
   var titleInput = document.createElement("input");
   titleInput.type = "text";
   titleInput.id = "thread-form-title-input";
-  titleDiv.appendChild(titleLabel);
-  titleDiv.appendChild(titleInput);
+  appendChildren(titleDiv, [titleLabel, titleInput]);
   var commentDiv = document.createElement("div");
   commentDiv.id = "comment-div";
   var commentLabel = document.createElement("label");
@@ -272,17 +257,12 @@ const createThreadForm = function() {
   var commentInput = document.createElement("textarea");
   commentInput.type = "text";
   commentInput.id = "thread-form-comment-input";
-  commentDiv.appendChild(commentLabel);
-  commentDiv.appendChild(commentInput);
+  appendChildren(commentDiv, [commentLabel, commentInput]);
   var submit = document.createElement("input");
   submit.type = "submit";
   submit.id = document.createElement("form-submit");
   submit.value = "submit";
-  form.appendChild(formTitle);
-  form.appendChild(nameDiv);
-  form.appendChild(titleDiv);
-  form.appendChild(commentDiv);
-  form.appendChild(submit);
+  appendChildren(form, [formTitle, nameDiv, titleDiv, commentDiv, submit]);
   content.appendChild(form);
   form.addEventListener("submit", function(event) {
     event.preventDefault();
