@@ -31,6 +31,7 @@
  border-radius: 10px;
  height: 70vh;
  padding: 15px;
+ overflow-y: scroll;
 }
 
 #form-title {
@@ -98,10 +99,6 @@
   font-size: 20px;
 }
 
-#hr {
-  margin: 0px;
-}
-
 #post-name {
   margin-top: 0px;
   font-size: 13px;
@@ -110,6 +107,7 @@
 #reply-form {
   border: 1px solid black;
   border-radius: 10px;
+  margin-top: 10px;
 }
 
 #reply-div {
@@ -119,8 +117,35 @@
   border-radius: 10px;
 }
 
+#reply-name-div {
+  margin-left: 5px;
+}
+
+#reply-comment-div {
+  margin-left: 5px;
+}
+
 #reply-name {
   margin-bottom: 0px;
   margin-top: 0px;
   font-size: 13px;
+}
+
+#reply-name-input {
+  border: 1px solid black;
+  border-radius: 5px;
+  margin-left: 26px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  padding: 5px;
+}
+
+#reply-text-input {
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+#reply-form-submit {
+  margin-left: 5px;
 }

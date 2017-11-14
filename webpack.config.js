@@ -1,25 +1,8 @@
-var config = {
-  entry: __dirname + '/client/src/app.js',
+module.exports = {
+  entry: __dirname + "/client/app.js",
   output: {
-    path: __dirname + '/client/build',
-    filename: 'bundle.js'
+    filename: "bundle.js",
+    path: __dirname + "/client/build"
   },
-  devtool: "source-map",
-  resolve: {
-    extensions: ['.js', '.jsx']
-  },
-  module: {
-    rules: [
-      {
-        test: /\.jsx?$/,
-        exclude: /(node_modules)/,
-        loader: 'babel-loader',
-        query: {
-          presets: ['react', 'es2015']
-        }
-      }
-    ]
-  }
-};
-
-module.exports = config;
+  devtool: 'source-map'
+}

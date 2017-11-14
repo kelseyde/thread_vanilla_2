@@ -1,5 +1,6 @@
 const createReply = function(comment, form) {
   var parent = form.parentElement;
+  parent.removeChild(form);
   var replyDiv = document.createElement("div");
   replyDiv.id = "reply-div";
   var name = document.createElement("p");
@@ -8,7 +9,6 @@ const createReply = function(comment, form) {
   var text = document.createElement("p");
   text.innerText = comment.text;
   text.id = "reply-text";
-
   var form = document.createElement("form");
   var input = document.createElement("input");
   input.type = "submit";
@@ -21,19 +21,14 @@ const createReply = function(comment, form) {
   form.addEventListener("submit", function(event) {
     event.preventDefault();
     createReplyForm(form);
-  })
+  });
 }
 
 const createReplyForm = function(form) {
-  console.log("form: ", form);
   var parent = form.parentElement;
-  console.log("parent: ", parent);
-
   var replyButton = document.getElementById("reply-button");
-
   var form = document.createElement("form");
   form.id = "reply-form";
-
   var nameDiv = document.createElement("div");
   nameDiv.id = "reply-name-div";
   var nameLabel = document.createElement("label");
@@ -44,9 +39,8 @@ const createReplyForm = function(form) {
   nameInput.id = "reply-name-input";
   nameDiv.appendChild(nameLabel);
   nameDiv.appendChild(nameInput);
-
   var commentDiv = document.createElement("div");
-  commentDiv.id = "comment-div";
+  commentDiv.id = "reply-comment-div";
   var commentLabel = document.createElement("label");
   commentLabel.innerText = "comment: "
   commentLabel.id = "reply-text-label";
@@ -55,40 +49,69 @@ const createReplyForm = function(form) {
   commentInput.id = "reply-text-input";
   commentDiv.appendChild(commentLabel);
   commentDiv.appendChild(commentInput);
-
   var submit = document.createElement("input");
   submit.type = "submit";
   submit.value = "submit";
   submit.id = "reply-form-submit";
-
   form.appendChild(nameDiv);
   form.appendChild(commentDiv);
   form.appendChild(submit);
   parent.appendChild(form);
-
   form.addEventListener("submit", function(event) {
     event.preventDefault();
-    var comment = {
-      name: nameInput.value,
+    var newComment = {
+      author: nameInput.value,
       text: commentInput.value,
       children: []
     }
-    post.children.push(comment);
-    parent.removeChild(form);
-    console.log("parent: ", parent);
-    createReply(comment, form);
+    var commentToFindCopy = createParentCommentCopy(form);
+    var foundComment = findComment(post, commentToFindCopy);
+    foundComment.children.push(newComment);
+    console.log(post);
+    createReply(newComment, form);
   });
-
 }
 
+
+var findComment = function(startPoint, commentToFind) {
+  var element = startPoint;
+  if (element.author.includes("submitted by")) {
+    var author = element.author.slice(13);
+  } else { var author = element.author }
+  if (element.author === author &&
+        element.text === commentToFind.text) {
+          return element;
+  } else if (element.children !== null) {
+    var result = null;
+    for (var i = 0; result === null && i < element.children.length; i++) {
+      result = findComment(element.children[i], commentToFind);
+    }
+    return result;
+  }
+  return null;
+}
+
+var createParentCommentCopy = function(form) {
+  if (form.parentElement.childNodes[0].tagName === "H4") {
+    var parentComment = {
+      author: form.parentElement.childNodes[2].innerText,
+      text: form.parentElement.childNodes[3].innerText
+    }
+  } else {
+    var parentComment = {
+      author: form.parentElement.childNodes[0].innerText,
+      text: form.parentElement.childNodes[1].innerText
+    }
+  }
+  return parentComment;
+}
+
+
 const createThread = function() {
-  var name = document.getElementById("thread-form-name-input").value;
-  var title = document.getElementById("thread-form-title-input").value;
-  var text = document.getElementById("thread-form-comment-input").value;
   post = {
-    name: name,
-    title: title,
-    text: text,
+    author: document.getElementById("thread-form-name-input").value,
+    title: document.getElementById("thread-form-title-input").value,
+    text: document.getElementById("thread-form-comment-input").value,
     children: []
   }
   var content = document.getElementById("content-div");
@@ -99,10 +122,9 @@ const createThread = function() {
   title.id = "post-title";
   title.innerText = post.title;
   var hr = document.createElement("hr");
-  hr.id = "hr";
   var name = document.createElement("p");
   name.id = "post-name";
-  name.innerText = "submitted by " + post.name;
+  name.innerText = "submitted by " + post.author;
   var text = document.createElement("p");
   text.id = "post-text";
   text.innerText = post.text;
@@ -127,13 +149,11 @@ const createThread = function() {
 const createThreadForm = function() {
   var content = document.getElementById("content-div");
   while (content.firstChild) { content.removeChild(content.firstChild) }
-
   var form = document.createElement("form");
   form.id = "thread-form";
   var formTitle = document.createElement("h4");
   formTitle.innerText = "start your thread here."
   formTitle.id = "form-title"
-
   var nameDiv = document.createElement("div");
   nameDiv.id = "name-div";
   var nameLabel = document.createElement("label");
@@ -144,7 +164,6 @@ const createThreadForm = function() {
   nameInput.id = "thread-form-name-input";
   nameDiv.appendChild(nameLabel);
   nameDiv.appendChild(nameInput);
-
   var titleDiv = document.createElement("div");
   titleDiv.id = "title-div";
   var titleLabel = document.createElement("label");
@@ -155,7 +174,6 @@ const createThreadForm = function() {
   titleInput.id = "thread-form-title-input";
   titleDiv.appendChild(titleLabel);
   titleDiv.appendChild(titleInput);
-
   var commentDiv = document.createElement("div");
   commentDiv.id = "comment-div";
   var commentLabel = document.createElement("label");
@@ -166,13 +184,10 @@ const createThreadForm = function() {
   commentInput.id = "thread-form-comment-input";
   commentDiv.appendChild(commentLabel);
   commentDiv.appendChild(commentInput);
-
-
   var submit = document.createElement("input");
   submit.type = "submit";
   submit.id = document.createElement("form-submit");
   submit.value = "submit";
-
   form.appendChild(formTitle);
   form.appendChild(nameDiv);
   form.appendChild(titleDiv);
