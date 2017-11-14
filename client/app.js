@@ -1,10 +1,55 @@
+var requestHelper = require("./helpers/request_helper");
+
+const showThread = function(thread, parentDiv) {
+  // var contentDiv = document.getElementById("content-div");
+  // while (contentDiv.firstChild) { contentDiv.removeChild(contentDiv.firstChild) }
+
+  //MUST BE DONE BEFOREHAND
+  //
+  // var content = document.getElementById("content-div");
+  // while (content.firstChild) { content.removeChild(content.firstChild) }
+  var postDiv = document.createElement("div");
+  postDiv.id = "post-div";
+  var title = document.createElement("h4");
+  title.id = "post-title";
+  title.innerText = post.title;
+  var hr = document.createElement("hr");
+  var name = document.createElement("p");
+  name.id = "post-name";
+  name.innerText = "submitted by " + post.author;
+  var text = document.createElement("p");
+  text.id = "post-text";
+  text.innerText = post.text;
+  var form = document.createElement("form");
+  var submit = document.createElement("input");
+  submit.type = "submit";
+  submit.value = "reply";
+  form.id = "reply-button"
+  form.appendChild(submit);
+  parentDiv.appendChild(postDiv);
+  postDiv.appendChild(title);
+  postDiv.appendChild(hr);
+  postDiv.appendChild(name);
+  postDiv.appendChild(text);
+  postDiv.appendChild(form);
+  form.addEventListener("submit", function(event) {
+    event.preventDefault();
+    createReplyForm(form);
+  });
+  if (thread.children.length > 0) {
+    for (var i = 0; i < thread.children.length - 1; i++) {
+      showThread(thread.children[i], postDiv);
+    }
+  }
+}
+
 const createReply = function(comment, form) {
   var parent = form.parentElement;
   parent.removeChild(form);
   var replyDiv = document.createElement("div");
   replyDiv.id = "reply-div";
   var name = document.createElement("p");
-  name.innerText = comment.name;
+  name.innerText = comment.author;
   name.id = "reply-name";
   var text = document.createElement("p");
   text.innerText = comment.text;
@@ -140,6 +185,11 @@ const createThread = function() {
   postDiv.appendChild(name);
   postDiv.appendChild(text);
   postDiv.appendChild(form);
+
+  requestHelper.post("/", JSON.stringify(post), function() {
+    console.log("thread inserted into db!");
+  })
+
   form.addEventListener("submit", function(event) {
     event.preventDefault();
     createReplyForm(form);
