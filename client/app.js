@@ -1,6 +1,5 @@
 var requestHelper = require("./helpers/request_helper");
 var threadSearch = require("./helpers/thread_search");
-var appendChildren = require('append-children');
 var dom = require("./helpers/dom");
 
 const showThread = function(parentThread, thread, parentDiv) {
@@ -12,14 +11,12 @@ const showThread = function(parentThread, thread, parentDiv) {
   var name = dom.new("p", "post-name", "submitted by " + thread.author);
   var text = dom.new("p", "post-text", thread.text);
   var form = dom.new("form", "reply-button");
-  var submit = dom.new("input");
-  submit.type = "submit";
-  submit.value = "reply";
+  var submit = dom.new("input", null, null, "submit", "reply");
   form.appendChild(submit);
   parentDiv.appendChild(postDiv);
   if (title) { postDiv.appendChild(title) }
   if (hr) { postDiv.appendChild(title) }
-  appendChildren(postDiv, [hr, name, text, form]);
+  dom.append(postDiv, [hr, name, text, form]);
   form.addEventListener("submit", function(event) {
     event.preventDefault();
     createReplyForm(parentThread, form);
@@ -31,22 +28,20 @@ const showThread = function(parentThread, thread, parentDiv) {
 
 const populateThreadList = function(threadList) {
   var content = document.getElementById("content-div");
-  while (content.firstChild) { content.removeChild(content.firstChild) }
+  dom.clear("content-div");
   threadList.forEach(function(thread) {
     var postDiv = dom.new("div", "post-div");
     var title = dom.new("h4", "post-title", thread.title);
     var hr = dom.new("hr");
     var name = dom.new("p", "post-name", "submitted by " + thread.author);
     var form = dom.new("form");
-    var input = dom.new("input");
-    input.type = "submit";
-    input.value = "view";
+    var input = dom.new("input", null, null, "submit", "view");
     form.appendChild(input);
     content.appendChild(postDiv);
-    appendChildren(postDiv, [title, hr, name, form]);
+    dom.append(postDiv, [title, hr, name, form]);
     form.addEventListener("submit", function(event) {
       event.preventDefault();
-      while (content.firstChild) { content.removeChild(content.firstChild) }
+      dom.clear("content-div");
       showThread(thread, thread, content);
     });
   });
@@ -68,12 +63,10 @@ const createReply = function(thread, comment, form) {
   var name = dom.new("p", "reply-name", comment.author);
   var text = dom.new("p", "reply-text", comment.text);
   var form = dom.new("form", "reply-button");
-  var input = dom.new("input");
-  input.type = "submit";
-  input.value = "reply";
+  var input = dom.new("input", null, null, "submit", "reply");
   form.appendChild(input);
   parent.appendChild(replyDiv);
-  appendChildren(replyDiv, [name, text, form]);
+  dom.append(replyDiv, [name, text, form]);
   form.addEventListener("submit", function(event) {
     event.preventDefault();
     createReplyForm(thread, form);
@@ -87,15 +80,13 @@ const createReplyForm = function(thread, form) {
   var nameDiv = dom.new("div", "reply-name-div");
   var nameLabel = dom.new("label", "reply-name-label", "name: ");
   var nameInput = dom.new("input", "reply-name-input");
-  appendChildren(nameDiv, [nameLabel, nameInput]);
+  dom.append(nameDiv, [nameLabel, nameInput]);
   var commentDiv = dom.new("div", "reply-comment-div")
   var commentLabel = dom.new("label", "reply-text-label", "comment: ");
   var commentInput = dom.new("textarea", "reply-text-input");
-  appendChildren(commentDiv, [commentLabel, commentInput]);
-  var submit = dom.new("input", "reply-form-submit");
-  submit.type = "submit";
-  submit.value = "submit";
-  appendChildren(form, [nameDiv, commentDiv, submit]);
+  dom.append(commentDiv, [commentLabel, commentInput]);
+  var submit = dom.new("input", "reply-form-submit", null, "submit", "submit");
+  dom.append(form, [nameDiv, commentDiv, submit]);
   parent.appendChild(form);
   form.addEventListener("submit", function(event) {
     event.preventDefault();
@@ -114,27 +105,23 @@ const createReplyForm = function(thread, form) {
 
 
 const createThread = function() {
-  thread = {
+  var thread = {
     author: document.getElementById("thread-form-name-input").value,
     title: document.getElementById("thread-form-title-input").value,
     text: document.getElementById("thread-form-comment-input").value,
     children: []
   }
-  var content = document.getElementById("content-div");
-  while (content.firstChild) { content.removeChild(content.firstChild) }
+  var content = dom.clear("content-div");
   var postDiv = dom.new("div", "post-div");
   var title = dom.new("h4", "post-title", thread.title);
   var hr = dom.new("hr", "hr");
   var name = dom.new("p", "post-name", "submitted by " + thread.author);
   var text = dom.new("p", "post-text", thread.text);
-  var form = dom.new("form");
-  var submit = dom.new("input");
-  submit.type = "submit";
-  submit.value = "reply";
-  form.id = "reply-button"
+  var form = dom.new("form", "reply-button");
+  var submit = dom.new("input", null, null, "submit", "reply");
   form.appendChild(submit);
   content.appendChild(postDiv);
-  appendChildren(postDiv, [title, hr, name, text, form]);
+  dom.append(postDiv, [title, hr, name, text, form]);
   requestHelper.post("/", JSON.stringify(thread), function() {})
   form.addEventListener("submit", function(event) {
     event.preventDefault();
@@ -143,26 +130,23 @@ const createThread = function() {
 }
 
 const createThreadForm = function() {
-  var content = document.getElementById("content-div");
-  while (content.firstChild) { content.removeChild(content.firstChild) }
+  var content = dom.clear("content-div");
   var form = dom.new("form", "thread-form");
   var formTitle = dom.new("h4", "form-title", "start your thread here.");
   var nameDiv = dom.new("div", "name-div");
   var nameLabel = dom.new("label", "thread-form-name-label", "name: ");
   var nameInput = dom.new("input", "thread-form-name-input");
-  appendChildren(nameDiv, [nameLabel, nameInput]);
+  dom.append(nameDiv, [nameLabel, nameInput]);
   var titleDiv = dom.new("div", "title-div");
   var titleLabel = dom.new("label", "thread-form-title-label", "title: ");
   var titleInput = dom.new("input", "thread-form-title-input");
-  appendChildren(titleDiv, [titleLabel, titleInput]);
+  dom.append(titleDiv, [titleLabel, titleInput]);
   var commentDiv = dom.new("div", "comment-div");
   var commentLabel = dom.new("label", "thread-form-comment-label", "comment: ");
   var commentInput = dom.new("textarea", "thread-form-comment-input");
-  appendChildren(commentDiv, [commentLabel, commentInput]);
-  var submit = dom.new("input", "form-submit", "submit");
-  submit.type = "submit";
-  submit.id = document.createElement("form-submit");
-  appendChildren(form, [formTitle, nameDiv, titleDiv, commentDiv, submit]);
+  dom.append(commentDiv, [commentLabel, commentInput]);
+  var submit = dom.new("input", "form-submit", "submit", "submit", "submit");
+  dom.append(form, [formTitle, nameDiv, titleDiv, commentDiv, submit]);
   content.appendChild(form);
   form.addEventListener("submit", function(event) {
     event.preventDefault();

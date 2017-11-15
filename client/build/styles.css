@@ -77,16 +77,6 @@
   border-radius: 5px;
 }
 
-#form-submit {
-  background: dodgerblue;
-  color: dodgerblue;
-  border-style: outset;
-  border-color: #0066A2;
-  height: 50px;
-  width: 100px;
-  font: bold 15px arial, sans-serif;
-  text-shadow:none;
-}
 
 #post-div {
   padding: 10px;
