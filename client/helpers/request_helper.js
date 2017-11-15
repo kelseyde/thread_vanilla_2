@@ -5,7 +5,6 @@ var requestHelper = {
     request.open('GET', url);
     request.addEventListener('load', function() {
       var jsonString = request.responseText
-      console.log(jsonString);
       var data = JSON.parse(jsonString)
       callback(data)
     })
@@ -24,6 +23,7 @@ var requestHelper = {
   },
 
   put: function(url, updatedObject, callback) {
+    console.log("PUTTING STUFF IN THE DB");
     var request = new XMLHttpRequest();
     request.open("PUT", url);
     request.addEventListener("load", function() {

@@ -1,10 +1,10 @@
 var requestHelper = require("./helpers/request_helper");
-var appendChildren = require('append-children');
 var threadSearch = require("./helpers/thread_search");
+var appendChildren = require('append-children');
 var dom = require("./helpers/dom");
 
 const showThread = function(thread, parentDiv) {
-  post = thread;
+  console.log("THE POST IN SHOWTHREAD: ", post);
   var postDiv = dom.new("div", "post-div");
   if (thread.title) {
     var title = dom.new("h4", "post-title", thread.title);
@@ -64,6 +64,7 @@ const inititaliseViewButton = function() {
 }
 
 const createReply = function(comment, form) {
+  console.log("THE POST IN CREATEREPLY: ", post);
   var parent = form.parentElement;
   parent.removeChild(form);
   var replyDiv = dom.new("div", "reply-div");
@@ -83,6 +84,7 @@ const createReply = function(comment, form) {
 }
 
 const createReplyForm = function(form) {
+  console.log("THE POST IN CREATEREPLYFORM: ", post);
   var parent = form.parentElement;
   var replyButton = document.getElementById("reply-button");
   var form = dom.new("form", "reply-form");
@@ -106,7 +108,7 @@ const createReplyForm = function(form) {
       text: commentInput.value,
       children: []
     }
-    
+
     var commentToFindCopy = threadSearch.createParentCommentCopy(form);
     var foundComment = threadSearch.findComment(post, commentToFindCopy);
     console.log("POST: ", post);
@@ -127,6 +129,7 @@ const createThread = function() {
     text: document.getElementById("thread-form-comment-input").value,
     children: []
   }
+  console.log("THE POST IN CREATETHREAD: ", post);
   var content = document.getElementById("content-div");
   while (content.firstChild) { content.removeChild(content.firstChild) }
   var postDiv = dom.new("div", "post-div");
