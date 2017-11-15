@@ -145,6 +145,16 @@ const createThreadForm = function() {
   });
 }
 
+const initialiseHomeButton = function() {
+  var home = document.getElementById("title");
+  home.addEventListener("click", function() {
+    var content = dom.clear("content-div");
+    dom.append(content, [
+      dom.new("p", "intro-text", "a comment threading app, written in JavaScript.")
+    ]);
+  });
+}
+
 const inititaliseViewButton = function() {
   var viewButton = document.getElementById("view");
   viewButton.addEventListener("click", function() {
@@ -160,7 +170,10 @@ const initialiseStartButton = function() {
 }
 
 window.addEventListener("DOMContentLoaded", function() {
+  var introText = dom.new("p", "intro-text",
+    "a comment threading app, written in JavaScript.");
+  dom.append(document.getElementById("content-div"), [introText])
   initialiseStartButton();
+  initialiseHomeButton();
   inititaliseViewButton();
 });
-//249

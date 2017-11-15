@@ -25,9 +25,9 @@ app.post("/", function (req, res) {
 app.put("/", function (req, res) {
   var updatedObject = req.body;
   queryHelper.update(updatedObject, function() {
-    res.json({status: "okay"})
-  })
-})
+    res.json({status: "okay"});
+  });
+});
 
 app.use(express.static('client/build'));
 
