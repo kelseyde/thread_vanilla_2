@@ -32,6 +32,7 @@
 
 #title:hover {
   -webkit-transform: scale(1.2);
+  -webkit-transition: all 0.07s ease-in-out;
 }
 
 #content-div {
