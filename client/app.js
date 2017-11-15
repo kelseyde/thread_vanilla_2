@@ -22,7 +22,6 @@ const showThread = function(parentThread, thread, parentDiv) {
   appendChildren(postDiv, [hr, name, text, form]);
   form.addEventListener("submit", function(event) {
     event.preventDefault();
-    console.log("thread before it's passed to reply form: ", parentThread);
     createReplyForm(parentThread, form);
   });
   for (var i = 0; i < thread.children.length; i++) {
@@ -108,11 +107,7 @@ const createReplyForm = function(thread, form) {
     var commentToFindCopy = threadSearch.createParentCommentCopy(form);
     var foundComment = threadSearch.findComment(thread, commentToFindCopy);
     foundComment.children.push(newComment);
-    console.log(foundComment);
-    console.log("thread after push: ", thread);
-    requestHelper.put("/", JSON.stringify(thread), function() {
-      console.log("put request sent! content is ", JSON.stringify(thread));
-    });
+    requestHelper.put("/", JSON.stringify(thread), function() {} );
     createReply(thread, newComment, form);
   });
 }

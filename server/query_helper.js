@@ -25,12 +25,9 @@ var queryHelper = {
   },
 
   update: function(object, result) {
-    console.log("PUTTING STUFF IN THE DB");
     MongoClient.connect(this.url, function(err, db) {
       if (err) console.log("ERROR");
       var threadCollection = db.collection("threads");
-      // console.log("object: ", object);
-      // console.log("object title: ", object.title);
       if (object._id) object._id = new ObjectID(object._id)
       threadCollection.update(
         {
