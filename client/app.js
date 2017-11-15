@@ -47,15 +47,6 @@ const populateThreadList = function(threadList) {
   });
 }
 
-const inititaliseViewButton = function() {
-  var viewButton = document.getElementById("view");
-  viewButton.addEventListener("click", function() {
-    requestHelper.get("/threads", function(threadList) {
-      populateThreadList(threadList);
-    });
-  });
-}
-
 const createReply = function(thread, comment, form) {
   var parent = form.parentElement;
   parent.removeChild(form);
@@ -151,6 +142,15 @@ const createThreadForm = function() {
   form.addEventListener("submit", function(event) {
     event.preventDefault();
     createThread();
+  });
+}
+
+const inititaliseViewButton = function() {
+  var viewButton = document.getElementById("view");
+  viewButton.addEventListener("click", function() {
+    requestHelper.get("/threads", function(threadList) {
+      populateThreadList(threadList);
+    });
   });
 }
 
