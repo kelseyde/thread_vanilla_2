@@ -23,7 +23,7 @@ var requestHelper = {
   },
 
   put: function(url, updatedObject, callback) {
-    console.log("PUTTING STUFF IN THE DB");
+    console.log("we are in the put request");
     var request = new XMLHttpRequest();
     request.open("PUT", url);
     request.addEventListener("load", function() {

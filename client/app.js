@@ -3,8 +3,7 @@ var threadSearch = require("./helpers/thread_search");
 var appendChildren = require('append-children');
 var dom = require("./helpers/dom");
 
-const showThread = function(thread, parentDiv) {
-  console.log("THE POST IN SHOWTHREAD: ", post);
+const showThread = function(parentThread, thread, parentDiv) {
   var postDiv = dom.new("div", "post-div");
   if (thread.title) {
     var title = dom.new("h4", "post-title", thread.title);
@@ -23,11 +22,11 @@ const showThread = function(thread, parentDiv) {
   appendChildren(postDiv, [hr, name, text, form]);
   form.addEventListener("submit", function(event) {
     event.preventDefault();
-    createReplyForm(form);
+    console.log("thread before it's passed to reply form: ", parentThread);
+    createReplyForm(parentThread, form);
   });
   for (var i = 0; i < thread.children.length; i++) {
-    console.log("we are in the for loop");
-    showThread(thread.children[i], postDiv);
+    showThread(parentThread, thread.children[i], postDiv);
   }
 }
 
@@ -49,7 +48,7 @@ const populateThreadList = function(threadList) {
     form.addEventListener("submit", function(event) {
       event.preventDefault();
       while (content.firstChild) { content.removeChild(content.firstChild) }
-      showThread(thread, content);
+      showThread(thread, thread, content);
     });
   });
 }
@@ -63,14 +62,13 @@ const inititaliseViewButton = function() {
   });
 }
 
-const createReply = function(comment, form) {
-  console.log("THE POST IN CREATEREPLY: ", post);
+const createReply = function(thread, comment, form) {
   var parent = form.parentElement;
   parent.removeChild(form);
   var replyDiv = dom.new("div", "reply-div");
   var name = dom.new("p", "reply-name", comment.author);
   var text = dom.new("p", "reply-text", comment.text);
-  var form = dom.new("form");
+  var form = dom.new("form", "reply-button");
   var input = dom.new("input");
   input.type = "submit";
   input.value = "reply";
@@ -79,12 +77,11 @@ const createReply = function(comment, form) {
   appendChildren(replyDiv, [name, text, form]);
   form.addEventListener("submit", function(event) {
     event.preventDefault();
-    createReplyForm(form);
+    createReplyForm(thread, form);
   });
 }
 
-const createReplyForm = function(form) {
-  console.log("THE POST IN CREATEREPLYFORM: ", post);
+const createReplyForm = function(thread, form) {
   var parent = form.parentElement;
   var replyButton = document.getElementById("reply-button");
   var form = dom.new("form", "reply-form");
@@ -108,35 +105,33 @@ const createReplyForm = function(form) {
       text: commentInput.value,
       children: []
     }
-
     var commentToFindCopy = threadSearch.createParentCommentCopy(form);
-    var foundComment = threadSearch.findComment(post, commentToFindCopy);
-    console.log("POST: ", post);
-    console.log("FOUND COMMENT: ", foundComment);
+    var foundComment = threadSearch.findComment(thread, commentToFindCopy);
     foundComment.children.push(newComment);
-    requestHelper.put("/", JSON.stringify(post), function() {
-      console.log("put request sent! content is ", JSON.stringify(post));
+    console.log(foundComment);
+    console.log("thread after push: ", thread);
+    requestHelper.put("/", JSON.stringify(thread), function() {
+      console.log("put request sent! content is ", JSON.stringify(thread));
     });
-    createReply(newComment, form);
+    createReply(thread, newComment, form);
   });
 }
 
 
 const createThread = function() {
-  post = {
+  thread = {
     author: document.getElementById("thread-form-name-input").value,
     title: document.getElementById("thread-form-title-input").value,
     text: document.getElementById("thread-form-comment-input").value,
     children: []
   }
-  console.log("THE POST IN CREATETHREAD: ", post);
   var content = document.getElementById("content-div");
   while (content.firstChild) { content.removeChild(content.firstChild) }
   var postDiv = dom.new("div", "post-div");
-  var title = dom.new("h4", "post-title", post.title);
+  var title = dom.new("h4", "post-title", thread.title);
   var hr = dom.new("hr", "hr");
-  var name = dom.new("p", "post-name", "submitted by " + post.author);
-  var text = dom.new("p", "post-text", post.text);
+  var name = dom.new("p", "post-name", "submitted by " + thread.author);
+  var text = dom.new("p", "post-text", thread.text);
   var form = dom.new("form");
   var submit = dom.new("input");
   submit.type = "submit";
@@ -145,10 +140,10 @@ const createThread = function() {
   form.appendChild(submit);
   content.appendChild(postDiv);
   appendChildren(postDiv, [title, hr, name, text, form]);
-  requestHelper.post("/", JSON.stringify(post), function() {})
+  requestHelper.post("/", JSON.stringify(thread), function() {})
   form.addEventListener("submit", function(event) {
     event.preventDefault();
-    createReplyForm(form);
+    createReplyForm(thread, form);
   })
 }
 
