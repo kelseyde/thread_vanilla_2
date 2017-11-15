@@ -9,6 +9,10 @@ var dom = {
     return element;
   },
 
+  get: function(id) {
+    return document.getElementById(id);
+  },
+
   clear: function(id) {
     var element = document.getElementById(id);
     while (element.firstChild) { element.removeChild(element.firstChild) }

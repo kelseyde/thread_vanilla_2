@@ -27,7 +27,7 @@ const showThread = function(parentThread, thread, parentDiv) {
 }
 
 const populateThreadList = function(threadList) {
-  var content = document.getElementById("content-div");
+  var content = dom.get("content-div");
   dom.clear("content-div");
   threadList.forEach(function(thread) {
     var postDiv = dom.new("div", "post-div");
@@ -66,7 +66,7 @@ const createReply = function(thread, comment, form) {
 
 const createReplyForm = function(thread, form) {
   var parent = form.parentElement;
-  var replyButton = document.getElementById("reply-button");
+  var replyButton = dom.get("reply-button");
   var form = dom.new("form", "reply-form");
   var nameDiv = dom.new("div", "reply-name-div");
   var nameLabel = dom.new("label", "reply-name-label", "name: ");
@@ -97,9 +97,9 @@ const createReplyForm = function(thread, form) {
 
 const createThread = function() {
   var thread = {
-    author: document.getElementById("thread-form-name-input").value,
-    title: document.getElementById("thread-form-title-input").value,
-    text: document.getElementById("thread-form-comment-input").value,
+    author: dom.get("thread-form-name-input").value,
+    title: dom.get("thread-form-title-input").value,
+    text: dom.get("thread-form-comment-input").value,
     children: []
   }
   var content = dom.clear("content-div");
@@ -146,7 +146,7 @@ const createThreadForm = function() {
 }
 
 const initialiseHomeButton = function() {
-  var home = document.getElementById("title");
+  var home = dom.get("title");
   home.addEventListener("click", function() {
     var content = dom.clear("content-div");
     dom.append(content, [
@@ -156,7 +156,7 @@ const initialiseHomeButton = function() {
 }
 
 const inititaliseViewButton = function() {
-  var viewButton = document.getElementById("view");
+  var viewButton = dom.get("view");
   viewButton.addEventListener("click", function() {
     requestHelper.get("/threads", function(threadList) {
       populateThreadList(threadList);
@@ -165,14 +165,14 @@ const inititaliseViewButton = function() {
 }
 
 const initialiseStartButton = function() {
-  var start = document.getElementById("start");
+  var start = dom.get("start");
   start.addEventListener("click", createThreadForm);
 }
 
 window.addEventListener("DOMContentLoaded", function() {
   var introText = dom.new("p", "intro-text",
     "a comment threading app, written in JavaScript.");
-  dom.append(document.getElementById("content-div"), [introText])
+  dom.append(dom.get("content-div"), [introText])
   initialiseStartButton();
   initialiseHomeButton();
   inititaliseViewButton();
