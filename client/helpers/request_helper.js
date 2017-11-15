@@ -5,6 +5,7 @@ var requestHelper = {
     request.open('GET', url);
     request.addEventListener('load', function() {
       var jsonString = request.responseText
+      console.log(jsonString);
       var data = JSON.parse(jsonString)
       callback(data)
     })

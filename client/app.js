@@ -106,6 +106,7 @@ const createReplyForm = function(form) {
       text: commentInput.value,
       children: []
     }
+    
     var commentToFindCopy = threadSearch.createParentCommentCopy(form);
     var foundComment = threadSearch.findComment(post, commentToFindCopy);
     console.log("POST: ", post);
