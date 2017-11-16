@@ -5,10 +5,6 @@ var queryHelper = require("./server/query_helper");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/client/build/index.html');
-});
-
 app.get("/threads", function(req, res) {
   queryHelper.all(function(docs) {
     res.json(docs);
